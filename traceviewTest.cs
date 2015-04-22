@@ -6,33 +6,46 @@ using System.IO;
 
     public class traceviewTest
     {
+		public static void Main()
+		{
+			const string url = "http://www.google.com";
+			const int maxHtmlMarkupCharToLookAt = 1000;
+			var request = (HttpWebRequest)WebRequest.Create(url);
 
-        public static void Main ()
-        {
-            const string url = "http://www.appneta.com";
-            var request = (HttpWebRequest)WebRequest.Create (url);
+			var response = (HttpWebResponse)request.GetResponse();
 
-            var response = (HttpWebResponse)request.GetResponse ();
+			Console.WriteLine("Method is {0}",response.Method);
+			Console.WriteLine("Status code is {0}", response.StatusCode);
+			Console.WriteLine("Content type is {0}", response.ContentType);
 
-            Console.WriteLine ("Content length is {0}", response.ContentLength);
-            Console.WriteLine ("Content type is {0}", response.ContentType);
+			var receiveStream = response.GetResponseStream();
+			if (receiveStream != null)
+			{
+				var readStream = new StreamReader(receiveStream, Encoding.UTF8);
 
-            var receiveStream = response.GetResponseStream ();
-            var readStream = new StreamReader (receiveStream, Encoding.UTF8);
-
-            Console.WriteLine ("Reading appneta HTML markup...");
-            Console.WriteLine (readStream.ReadToEnd ());
-            response.Close ();
-            readStream.Close ();
-        }
-    }
+				Console.WriteLine("Reading google HTML markup...");
+				var htmlMarkup = readStream.ReadToEnd();
+				if (htmlMarkup.Length > maxHtmlMarkupCharToLookAt)
+					Console.WriteLine(htmlMarkup.Substring(0, maxHtmlMarkupCharToLookAt));
+				else
+					Console.WriteLine(htmlMarkup);
+				Console.WriteLine("...");
+				Console.ReadLine();
+				response.Close();
+				readStream.Close();
+			}
+		}
+	}
+}
 
 /*
-The output looks like:
-Content length is 8070
-Content type is text/plain; charset=utf-8
-Reading page…
-<!DOCTYPE html>
-...
-</html>
+
+ * The output looks like:
+ * Method is GET
+ * Status code is OK
+ * Content type is text/html; charset=ISO-8859-1
+ * Reading page…
+ * <!DOCTYPE html>
+ * ...
+ * </html>
 */
