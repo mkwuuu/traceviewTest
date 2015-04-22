@@ -20,7 +20,7 @@ using System.IO;
             var receiveStream = response.GetResponseStream ();
             var readStream = new StreamReader (receiveStream, Encoding.UTF8);
 
-            Console.WriteLine ("Reading appneta...");
+            Console.WriteLine ("Reading appneta HTML markup...");
             Console.WriteLine (readStream.ReadToEnd ());
             response.Close ();
             readStream.Close ();
